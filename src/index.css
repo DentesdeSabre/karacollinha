@@ -1,0 +1,64 @@
+:root {
+  --primary: #c08552;
+  --primary-dark: #a67240;
+  --primary-light: #fdf2ec;
+  --secondary: #e8b4b8;
+  --secondary-light: #fef5f7;
+  --accent: #d4956a;
+  --text: #2d2d2d;
+  --text-secondary: #6b7280;
+  --bg: #faf9f7;
+  --bg-alt: #f5f3f0;
+  --border: #e5e5e5;
+  --whatsapp: #25d366;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

@@ -1,0 +1,24 @@
+.offers-page {
+  padding-top: 70px;
+}
+
+.offers-header {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff0e6 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.offers-header h1 {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  color: var(--text);
+}
+
+.offers-header p {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+}
