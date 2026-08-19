@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { ProductImage } from '../types';
 import './ImageGallery.css';
@@ -12,9 +12,14 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [images]);
+
   if (!images || images.length === 0) return null;
 
   const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order);
+  const safeIndex = Math.min(currentIndex, sorted.length - 1);
 
   const navigate = (direction: 'prev' | 'next') => {
     setCurrentIndex((prev) => {
@@ -27,7 +32,7 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
     <>
       <div className="gallery">
         <div className="gallery-main" onClick={() => setLightboxOpen(true)}>
-          <img src={sorted[currentIndex].url} alt={sorted[currentIndex].alt || productName} />
+          <img src={sorted[safeIndex].url} alt={sorted[safeIndex].alt || productName} />
           {sorted.length > 1 && (
             <>
               <button className="gallery-nav prev" onClick={(e) => { e.stopPropagation(); navigate('prev'); }}>
@@ -38,7 +43,7 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
               </button>
             </>
           )}
-          <span className="gallery-count">{currentIndex + 1} / {sorted.length}</span>
+          <span className="gallery-count">{safeIndex + 1} / {sorted.length}</span>
         </div>
 
         {sorted.length > 1 && (
@@ -46,7 +51,7 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
             {sorted.map((img, i) => (
               <button
                 key={img.id}
-                className={`gallery-thumb ${i === currentIndex ? 'active' : ''}`}
+                className={`gallery-thumb ${i === safeIndex ? 'active' : ''}`}
                 onClick={() => setCurrentIndex(i)}
               >
                 <img src={img.url} alt={img.alt || productName} />
@@ -61,7 +66,7 @@ export default function ImageGallery({ images, productName }: ImageGalleryProps)
           <button className="lightbox-close" onClick={() => setLightboxOpen(false)}>
             <X size={24} />
           </button>
-          <img src={sorted[currentIndex].url} alt={sorted[currentIndex].alt || productName} onClick={(e) => e.stopPropagation()} />
+          <img src={sorted[safeIndex].url} alt={sorted[safeIndex].alt || productName} onClick={(e) => e.stopPropagation()} />
           {sorted.length > 1 && (
             <>
               <button className="lightbox-nav prev" onClick={(e) => { e.stopPropagation(); navigate('prev'); }}>

@@ -37,10 +37,15 @@ export default function CategoriesAdmin() {
     if (!file) return;
 
     setUploading(true);
-    const path = `categories/${Date.now()}_${file.name}`;
-    const url = await uploadImage(file, 'product-images', path);
-    setImageUrl(url);
-    setUploading(false);
+    try {
+      const path = `categories/${Date.now()}_${file.name}`;
+      const url = await uploadImage(file, 'product-images', path);
+      setImageUrl(url);
+    } catch {
+      alert('Falha ao enviar imagem');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -53,9 +58,17 @@ export default function CategoriesAdmin() {
     };
 
     if (editingId) {
-      await supabase.from('categories').update(data).eq('id', editingId);
+      const { error } = await supabase.from('categories').update(data).eq('id', editingId);
+      if (error) {
+        alert('Erro ao atualizar categoria: ' + error.message);
+        return;
+      }
     } else {
-      await supabase.from('categories').insert(data);
+      const { error } = await supabase.from('categories').insert(data);
+      if (error) {
+        alert('Erro ao criar categoria: ' + error.message);
+        return;
+      }
     }
 
     resetForm();
@@ -64,7 +77,11 @@ export default function CategoriesAdmin() {
 
   const handleDelete = async (id: string) => {
     if (!confirm('Tem certeza que deseja excluir esta categoria?')) return;
-    await supabase.from('categories').delete().eq('id', id);
+    const { error } = await supabase.from('categories').delete().eq('id', id);
+    if (error) {
+      alert('Erro ao excluir categoria: ' + error.message);
+      return;
+    }
     refetch();
   };
 

@@ -17,6 +17,8 @@ export default function Settings() {
   const [saved, setSaved] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
   const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [originalBannerUrl, setOriginalBannerUrl] = useState('');
+  const [originalLogoUrl, setOriginalLogoUrl] = useState('');
 
   useEffect(() => {
     if (settings) {
@@ -27,6 +29,8 @@ export default function Settings() {
       setBannerUrl(settings.banner_url || '');
       setLogoUrl(settings.logo_url || '');
       setOriginPostalCode(settings.origin_postal_code || '');
+      setOriginalBannerUrl(settings.banner_url || '');
+      setOriginalLogoUrl(settings.logo_url || '');
     }
   }, [settings]);
 
@@ -43,12 +47,15 @@ export default function Settings() {
     if (!file) return;
 
     setUploadingBanner(true);
-    const oldUrl = bannerUrl;
-    const path = `banner_${Date.now()}_${file.name}`;
-    const url = await uploadImage(file, 'store-settings', path);
-    setBannerUrl(url);
-    if (oldUrl) await deleteOldImage(oldUrl);
-    setUploadingBanner(false);
+    try {
+      const path = `banner_${Date.now()}_${file.name}`;
+      const url = await uploadImage(file, 'store-settings', path);
+      setBannerUrl(url);
+    } catch {
+      alert('Falha ao enviar banner');
+    } finally {
+      setUploadingBanner(false);
+    }
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,22 +63,27 @@ export default function Settings() {
     if (!file) return;
 
     setUploadingLogo(true);
-    const oldUrl = logoUrl;
-    const path = `logo_${Date.now()}_${file.name}`;
-    const url = await uploadImage(file, 'store-settings', path);
-    setLogoUrl(url);
-    if (oldUrl) await deleteOldImage(oldUrl);
-    setUploadingLogo(false);
+    try {
+      const path = `logo_${Date.now()}_${file.name}`;
+      const url = await uploadImage(file, 'store-settings', path);
+      setLogoUrl(url);
+    } catch {
+      alert('Falha ao enviar logo');
+    } finally {
+      setUploadingLogo(false);
+    }
   };
 
   const handleRemoveBanner = async () => {
     await deleteOldImage(bannerUrl);
     setBannerUrl('');
+    setOriginalBannerUrl('');
   };
 
   const handleRemoveLogo = async () => {
     await deleteOldImage(logoUrl);
     setLogoUrl('');
+    setOriginalLogoUrl('');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -89,10 +101,48 @@ export default function Settings() {
       origin_postal_code: originPostalCode.replace(/\D/g, ''),
     };
 
+    let saveError = false;
+
     if (settings?.id) {
-      await supabase.from('store_settings').update(data).eq('id', settings.id);
+      const { error } = await supabase.from('store_settings').update(data).eq('id', settings.id);
+      if (error) {
+        alert('Erro ao salvar: ' + error.message);
+        setSaving(false);
+        return;
+      }
     } else {
-      await supabase.from('store_settings').insert(data);
+      const { data: existing } = await supabase
+        .from('store_settings')
+        .select('id')
+        .limit(1)
+        .maybeSingle();
+
+      if (existing?.id) {
+        const { error } = await supabase.from('store_settings').update(data).eq('id', existing.id);
+        if (error) {
+          alert('Erro ao salvar: ' + error.message);
+          setSaving(false);
+          return;
+        }
+      } else {
+        const { error } = await supabase.from('store_settings').insert(data);
+        if (error) {
+          alert('Erro ao salvar: ' + error.message);
+          setSaving(false);
+          return;
+        }
+      }
+    }
+
+    if (!saveError) {
+      if (originalBannerUrl && originalBannerUrl !== bannerUrl) {
+        await deleteOldImage(originalBannerUrl);
+      }
+      if (originalLogoUrl && originalLogoUrl !== logoUrl) {
+        await deleteOldImage(originalLogoUrl);
+      }
+      setOriginalBannerUrl(bannerUrl);
+      setOriginalLogoUrl(logoUrl);
     }
 
     refetch();

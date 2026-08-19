@@ -11,7 +11,7 @@ export function useStoreSettings() {
       .from('store_settings')
       .select('*')
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (!error && data) setSettings(data);
     setLoading(false);

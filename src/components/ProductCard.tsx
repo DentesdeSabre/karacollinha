@@ -11,7 +11,7 @@ interface ProductCardProps {
 export default function ProductCard({ product }: ProductCardProps) {
   const { settings } = useStoreSettings();
   const whatsappNumber = settings?.whatsapp_number || import.meta.env.VITE_WHATSAPP_NUMBER;
-  const mainImage = product.images?.[0]?.url || '/placeholder.jpg';
+  const mainImage = product.images?.[0]?.url || '/placeholder.svg';
   const discount = product.is_promo && product.promo_price
     ? Math.round(((product.price - product.promo_price) / product.price) * 100)
     : 0;

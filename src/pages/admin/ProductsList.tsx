@@ -27,19 +27,39 @@ export default function ProductsList() {
       }
     }
 
-    await supabase.from('product_images').delete().eq('product_id', id);
-    await supabase.from('products').delete().eq('id', id);
+    const { error: imgError } = await supabase.from('product_images').delete().eq('product_id', id);
+    if (imgError) {
+      alert('Erro ao excluir imagens: ' + imgError.message);
+      setDeleting(null);
+      return;
+    }
+
+    const { error } = await supabase.from('products').delete().eq('id', id);
+    if (error) {
+      alert('Erro ao excluir produto: ' + error.message);
+      setDeleting(null);
+      return;
+    }
+
     refetch();
     setDeleting(null);
   };
 
   const toggleActive = async (id: string, current: boolean) => {
-    await supabase.from('products').update({ is_active: !current }).eq('id', id);
+    const { error } = await supabase.from('products').update({ is_active: !current }).eq('id', id);
+    if (error) {
+      alert('Erro ao alterar status: ' + error.message);
+      return;
+    }
     refetch();
   };
 
   const toggleFeatured = async (id: string, current: boolean) => {
-    await supabase.from('products').update({ is_featured: !current }).eq('id', id);
+    const { error } = await supabase.from('products').update({ is_featured: !current }).eq('id', id);
+    if (error) {
+      alert('Erro ao alterar destaque: ' + error.message);
+      return;
+    }
     refetch();
   };
 

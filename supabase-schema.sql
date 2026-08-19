@@ -85,69 +85,75 @@ ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 ALTER TABLE product_images ENABLE ROW LEVEL SECURITY;
 
--- Políticas para store_settings (leitura pública, escrita apenas autenticado)
+-- Função auxiliar para verificar se o usuário é admin
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean AS $$
+  SELECT auth.jwt() ->> 'email' IN ('admin@sualoja.com');
+$$ LANGUAGE sql STABLE SECURITY DEFINER;
+
+-- Políticas para store_settings (leitura pública, escrita apenas admin)
 CREATE POLICY "Permitir leitura pública de configurações"
   ON store_settings FOR SELECT
   USING (true);
 
-CREATE POLICY "Permitir atualização de configurações para autenticados"
+CREATE POLICY "Permitir atualização de configurações para admin"
   ON store_settings FOR UPDATE
-  USING (auth.role() = 'authenticated');
+  USING (public.is_admin());
 
-CREATE POLICY "Permitir inserção de configurações para autenticados"
+CREATE POLICY "Permitir inserção de configurações para admin"
   ON store_settings FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
+  WITH CHECK (public.is_admin());
 
--- Políticas para categories (leitura pública, escrita apenas autenticado)
+-- Políticas para categories (leitura pública, escrita apenas admin)
 CREATE POLICY "Permitir leitura pública de categorias"
   ON categories FOR SELECT
   USING (true);
 
-CREATE POLICY "Permitir inserção de categorias para autenticados"
+CREATE POLICY "Permitir inserção de categorias para admin"
   ON categories FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
+  WITH CHECK (public.is_admin());
 
-CREATE POLICY "Permitir atualização de categorias para autenticados"
+CREATE POLICY "Permitir atualização de categorias para admin"
   ON categories FOR UPDATE
-  USING (auth.role() = 'authenticated');
+  USING (public.is_admin());
 
-CREATE POLICY "Permitir exclusão de categorias para autenticados"
+CREATE POLICY "Permitir exclusão de categorias para admin"
   ON categories FOR DELETE
-  USING (auth.role() = 'authenticated');
+  USING (public.is_admin());
 
--- Políticas para products (leitura pública de ativos, escrita apenas autenticado)
+-- Políticas para products (leitura pública de ativos, escrita apenas admin)
 CREATE POLICY "Permitir leitura pública de produtos ativos"
   ON products FOR SELECT
-  USING (is_active = true OR auth.role() = 'authenticated');
+  USING (is_active = true OR public.is_admin());
 
-CREATE POLICY "Permitir inserção de produtos para autenticados"
+CREATE POLICY "Permitir inserção de produtos para admin"
   ON products FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
+  WITH CHECK (public.is_admin());
 
-CREATE POLICY "Permitir atualização de produtos para autenticados"
+CREATE POLICY "Permitir atualização de produtos para admin"
   ON products FOR UPDATE
-  USING (auth.role() = 'authenticated');
+  USING (public.is_admin());
 
-CREATE POLICY "Permitir exclusão de produtos para autenticados"
+CREATE POLICY "Permitir exclusão de produtos para admin"
   ON products FOR DELETE
-  USING (auth.role() = 'authenticated');
+  USING (public.is_admin());
 
--- Políticas para product_images (leitura pública, escrita apenas autenticado)
+-- Políticas para product_images (leitura pública, escrita apenas admin)
 CREATE POLICY "Permitir leitura pública de imagens"
   ON product_images FOR SELECT
   USING (true);
 
-CREATE POLICY "Permitir inserção de imagens para autenticados"
+CREATE POLICY "Permitir inserção de imagens para admin"
   ON product_images FOR INSERT
-  WITH CHECK (auth.role() = 'authenticated');
+  WITH CHECK (public.is_admin());
 
-CREATE POLICY "Permitir atualização de imagens para autenticados"
+CREATE POLICY "Permitir atualização de imagens para admin"
   ON product_images FOR UPDATE
-  USING (auth.role() = 'authenticated');
+  USING (public.is_admin());
 
-CREATE POLICY "Permitir exclusão de imagens para autenticados"
+CREATE POLICY "Permitir exclusão de imagens para admin"
   ON product_images FOR DELETE
-  USING (auth.role() = 'authenticated');
+  USING (public.is_admin());
 
 -- =============================================
 -- STORAGE (Supabase Storage)
@@ -163,13 +169,13 @@ CREATE POLICY "Permitir leitura pública de imagens de produtos"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'product-images');
 
-CREATE POLICY "Permitir upload de imagens de produtos para autenticados"
+CREATE POLICY "Permitir upload de imagens de produtos para admin"
   ON storage.objects FOR INSERT
-  WITH CHECK (bucket_id = 'product-images' AND auth.role() = 'authenticated');
+  WITH CHECK (bucket_id = 'product-images' AND public.is_admin());
 
-CREATE POLICY "Permitir exclusão de imagens de produtos para autenticados"
+CREATE POLICY "Permitir exclusão de imagens de produtos para admin"
   ON storage.objects FOR DELETE
-  USING (bucket_id = 'product-images' AND auth.role() = 'authenticated');
+  USING (bucket_id = 'product-images' AND public.is_admin());
 
 -- Criar bucket para imagens da loja (logo e banner)
 INSERT INTO storage.buckets (id, name, public)
@@ -181,13 +187,13 @@ CREATE POLICY "Permitir leitura pública de imagens da loja"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'store-settings');
 
-CREATE POLICY "Permitir upload de imagens da loja para autenticados"
+CREATE POLICY "Permitir upload de imagens da loja para admin"
   ON storage.objects FOR INSERT
-  WITH CHECK (bucket_id = 'store-settings' AND auth.role() = 'authenticated');
+  WITH CHECK (bucket_id = 'store-settings' AND public.is_admin());
 
-CREATE POLICY "Permitir exclusão de imagens da loja para autenticados"
+CREATE POLICY "Permitir exclusão de imagens da loja para admin"
   ON storage.objects FOR DELETE
-  USING (bucket_id = 'store-settings' AND auth.role() = 'authenticated');
+  USING (bucket_id = 'store-settings' AND public.is_admin());
 
 -- =============================================
 -- ÍNDICES para performance
