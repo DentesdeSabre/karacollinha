@@ -10,6 +10,11 @@ export interface Product {
   is_active: boolean;
   stock: number;
   sort_order: number;
+  weight: number;
+  height: number;
+  width: number;
+  length: number;
+  insurance_value: number;
   created_at: string;
   updated_at: string;
   images?: ProductImage[];
@@ -43,7 +48,21 @@ export interface StoreSettings {
   logo_url: string;
   primary_color: string;
   secondary_color: string;
+  origin_postal_code: string;
   updated_at: string;
+}
+
+export interface ShippingOption {
+  id: number;
+  name: string;
+  company: string;
+  company_picture: string;
+  price: string;
+  custom_price: string;
+  delivery_time: number;
+  delivery_range: { min: number; max: number };
+  custom_delivery_time: number;
+  custom_delivery_range: { min: number; max: number };
 }
 
 export interface User {

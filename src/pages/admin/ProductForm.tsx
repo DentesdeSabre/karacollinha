@@ -23,6 +23,11 @@ export default function ProductForm() {
   const [isActive, setIsActive] = useState(true);
   const [stock, setStock] = useState('0');
   const [sortOrder, setSortOrder] = useState('0');
+  const [weight, setWeight] = useState('');
+  const [height, setHeight] = useState('');
+  const [width, setWidth] = useState('');
+  const [length, setLength] = useState('');
+  const [insuranceValue, setInsuranceValue] = useState('');
   const [images, setImages] = useState<ProductImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -47,6 +52,11 @@ export default function ProductForm() {
           setIsActive(data.is_active);
           setStock(data.stock.toString());
           setSortOrder(data.sort_order.toString());
+          setWeight(data.weight?.toString() || '');
+          setHeight(data.height?.toString() || '');
+          setWidth(data.width?.toString() || '');
+          setLength(data.length?.toString() || '');
+          setInsuranceValue(data.insurance_value?.toString() || '');
           setImages(data.images || []);
         }
       };
@@ -102,6 +112,11 @@ export default function ProductForm() {
       is_active: isActive,
       stock: parseInt(stock),
       sort_order: parseInt(sortOrder),
+      weight: parseFloat(weight) || 0,
+      height: parseInt(height) || 0,
+      width: parseInt(width) || 0,
+      length: parseInt(length) || 0,
+      insurance_value: parseFloat(insuranceValue) || parseFloat(price) || 0,
     };
 
     if (isEditing && id) {
@@ -226,6 +241,66 @@ export default function ProductForm() {
                   />
                 </div>
               )}
+            </div>
+
+            <div className="form-card">
+              <h3>Dimensions para frete</h3>
+              <div className="form-row">
+                <div className="form-field">
+                  <label>Peso (kg)</label>
+                  <input
+                    type="number"
+                    step="0.001"
+                    min="0"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    placeholder="0,000"
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Valor declarado (R$)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={insuranceValue}
+                    onChange={(e) => setInsuranceValue(e.target.value)}
+                    placeholder="0,00"
+                  />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="form-field">
+                  <label>Altura (cm)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Largura (cm)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={width}
+                    onChange={(e) => setWidth(e.target.value)}
+                    placeholder="0"
+                  />
+                </div>
+              </div>
+              <div className="form-field">
+                <label>Comprimento (cm)</label>
+                <input
+                  type="number"
+                  min="0"
+                  value={length}
+                  onChange={(e) => setLength(e.target.value)}
+                  placeholder="0"
+                />
+              </div>
             </div>
           </div>
 

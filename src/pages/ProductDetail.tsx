@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Tag, ShoppingCart, Package } from 'lucide-react';
 import { useProduct } from '../hooks/useProducts';
 import { useStoreSettings } from '../hooks/useStoreSettings';
 import ImageGallery from '../components/ImageGallery';
+import FreteCalc from '../components/FreteCalc';
+import type { ShippingOption } from '../types';
 import './ProductDetail.css';
 
 export default function ProductDetail() {
@@ -10,6 +13,8 @@ export default function ProductDetail() {
   const { product, loading } = useProduct(id || '');
   const { settings } = useStoreSettings();
   const whatsappNumber = settings?.whatsapp_number || import.meta.env.VITE_WHATSAPP_NUMBER;
+  const [selectedShipping, setSelectedShipping] = useState<ShippingOption | null>(null);
+  const [customerCep, setCustomerCep] = useState('');
 
   if (loading) {
     return (
@@ -32,11 +37,32 @@ export default function ProductDetail() {
     ? Math.round(((product.price - product.promo_price) / product.price) * 100)
     : 0;
 
+  const effectivePrice = product.is_promo && product.promo_price ? product.promo_price : product.price;
+
   const handleWhatsApp = () => {
-    const message = encodeURIComponent(
-      `Olá! Tenho interesse no produto ${product.name}, no valor de R$ ${(product.promo_price || product.price).toFixed(2).replace('.', ',')}. Gostaria de saber mais informações.`
-    );
-    window.open(`https://wa.me/${whatsappNumber}?text=${message}`, '_blank');
+    let message = `Olá! Tenho interesse neste produto:\n\n`;
+    message += `Produto: ${product.name}\n`;
+    message += `Preço: R$ ${effectivePrice.toFixed(2).replace('.', ',')}\n`;
+
+    if (selectedShipping) {
+      const cepInput = document.querySelector('.frete-input') as HTMLInputElement;
+      const cepValue = cepInput?.value || '';
+      const total = effectivePrice + parseFloat(selectedShipping.price);
+
+      message += `CEP: ${cepValue}\n`;
+      message += `Envio: ${selectedShipping.company} - ${selectedShipping.name}\n`;
+      message += `Prazo estimado: ${selectedShipping.delivery_range.min === selectedShipping.delivery_range.max ? `${selectedShipping.delivery_range.max} dias úteis` : `${selectedShipping.delivery_range.min} a ${selectedShipping.delivery_range.max} dias úteis`}\n`;
+      message += `Frete: R$ ${parseFloat(selectedShipping.price).toFixed(2).replace('.', ',')}\n`;
+      message += `Total: R$ ${total.toFixed(2).replace('.', ',')}\n`;
+    }
+
+    message += `\nGostaria de finalizar a compra.`;
+
+    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
+  const handleShippingSelect = (option: ShippingOption | null) => {
+    setSelectedShipping(option);
   };
 
   return (
@@ -92,6 +118,12 @@ export default function ProductDetail() {
               <p>{product.description}</p>
             </div>
 
+            <FreteCalc
+              productId={product.id}
+              productPrice={effectivePrice}
+              onSelect={handleShippingSelect}
+            />
+
             <div className="detail-actions">
               {product.stock > 0 && (
                 <button onClick={handleWhatsApp} className="btn-buy-whatsapp">
@@ -112,7 +144,7 @@ export default function ProductDetail() {
                 <span className="info-icon">🚚</span>
                 <div>
                   <strong>Entrega</strong>
-                  <p>Prazo e frete combinados pelo WhatsApp</p>
+                  <p>Calcule o frete acima com seu CEP</p>
                 </div>
               </div>
               <div className="info-item">

@@ -12,6 +12,7 @@ export default function Settings() {
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [bannerUrl, setBannerUrl] = useState('');
   const [logoUrl, setLogoUrl] = useState('');
+  const [originPostalCode, setOriginPostalCode] = useState('');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [uploadingBanner, setUploadingBanner] = useState(false);
@@ -25,6 +26,7 @@ export default function Settings() {
       setWhatsappNumber(settings.whatsapp_number || '');
       setBannerUrl(settings.banner_url || '');
       setLogoUrl(settings.logo_url || '');
+      setOriginPostalCode(settings.origin_postal_code || '');
     }
   }, [settings]);
 
@@ -84,6 +86,7 @@ export default function Settings() {
       whatsapp_number: whatsappNumber,
       banner_url: bannerUrl,
       logo_url: logoUrl,
+      origin_postal_code: originPostalCode.replace(/\D/g, ''),
     };
 
     if (settings?.id) {
@@ -150,6 +153,24 @@ export default function Settings() {
               placeholder="5511999999999"
             />
             <span className="field-hint">Formato: código do país + DDD + número (ex: 5511999999999)</span>
+          </div>
+        </div>
+
+        <div className="form-card">
+          <h3>Frete</h3>
+          <div className="form-field">
+            <label>CEP de origem da loja</label>
+            <input
+              type="text"
+              value={originPostalCode}
+              onChange={(e) => {
+                const v = e.target.value.replace(/\D/g, '').slice(0, 8);
+                setOriginPostalCode(v.length > 5 ? `${v.slice(0, 5)}-${v.slice(5)}` : v);
+              }}
+              placeholder="00000-000"
+              maxLength={9}
+            />
+            <span className="field-hint">CEP de onde os produtos serão enviados. Utilizado para cálculo de frete.</span>
           </div>
         </div>
 

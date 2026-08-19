@@ -19,6 +19,7 @@ CREATE TABLE store_settings (
   logo_url TEXT DEFAULT '',
   primary_color TEXT DEFAULT '#c08552',
   secondary_color TEXT DEFAULT '#e8b4b8',
+  origin_postal_code TEXT DEFAULT '',
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
@@ -54,6 +55,11 @@ CREATE TABLE products (
   is_active BOOLEAN DEFAULT TRUE,
   stock INTEGER DEFAULT 0,
   sort_order INTEGER DEFAULT 0,
+  weight NUMERIC(8,3) DEFAULT 0,
+  height INTEGER DEFAULT 0,
+  width INTEGER DEFAULT 0,
+  length INTEGER DEFAULT 0,
+  insurance_value NUMERIC(10,2) DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
