@@ -25,7 +25,7 @@ export default function Navbar() {
       <div className="navbar-container">
         <Link to="/" className="navbar-brand">
           <span className="brand-icon">🧶</span>
-          <span className="brand-text">{settings?.store_name || 'Crochet & Arte'}</span>
+          <span className="brand-text">{settings?.store_name || 'Karacol & Linha'}</span>
         </Link>
 
         <div className={`navbar-links ${menuOpen ? 'active' : ''}`}>

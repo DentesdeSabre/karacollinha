@@ -1,5 +1,5 @@
 -- =============================================
--- SCHEMA: Crochet & Arte - Loja de Produtos Artesanais
+-- SCHEMA: Karacol & Linha - Loja de Produtos Artesanais
 -- Execute este SQL no Supabase SQL Editor
 -- =============================================
 
@@ -11,7 +11,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- =============================================
 CREATE TABLE store_settings (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  store_name TEXT DEFAULT 'Crochet & Arte',
+  store_name TEXT DEFAULT 'Karacol & Linha',
   store_slogan TEXT DEFAULT 'Produtos artesanais feitos com amor e carinho',
   whatsapp_number TEXT DEFAULT '5511999999999',
   store_description TEXT DEFAULT '',
@@ -24,7 +24,7 @@ CREATE TABLE store_settings (
 
 -- Inserir configuração padrão
 INSERT INTO store_settings (store_name, store_slogan, whatsapp_number)
-VALUES ('Crochet & Arte', 'Produtos artesanais feitos com amor e carinho', '5511999999999')
+VALUES ('Karacol & Linha', 'Produtos artesanais feitos com amor e carinho', '5511999999999')
 ON CONFLICT DO NOTHING;
 
 -- =============================================

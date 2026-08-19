@@ -114,7 +114,7 @@ export default function Settings() {
               type="text"
               value={storeName}
               onChange={(e) => setStoreName(e.target.value)}
-              placeholder="Ex: Crochet & Arte"
+              placeholder="Ex: Karacol & Linha"
             />
           </div>
 

@@ -26,7 +26,7 @@ export default function Home() {
         <div className="hero-content">
           <h1 className="hero-title">
             <span className="hero-emoji">🧶</span>
-            {settings?.store_name || 'Crochet & Arte'}
+            {settings?.store_name || 'Karacol & Linha'}
           </h1>
           <p className="hero-slogan">{settings?.store_slogan || 'Peças artesanais feitas com amor e carinho'}</p>
           <div className="hero-actions">

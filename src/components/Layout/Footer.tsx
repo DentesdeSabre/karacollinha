@@ -12,7 +12,7 @@ export default function Footer() {
       <div className="footer-container">
         <div className="footer-section">
           <h3 className="footer-title">
-            <span>🧶</span> {settings?.store_name || 'Crochet & Arte'}
+            <span>🧶</span> {settings?.store_name || 'Karacol & Linha'}
           </h3>
           <p className="footer-desc">
             {settings?.store_description || 'Produtos artesanais feitos com amor e carinho. Peças únicas de crochê para decorar e aquecer seu lar.'}
@@ -41,7 +41,7 @@ export default function Footer() {
 
       <div className="footer-bottom">
         <p>
-          Feito com <Heart size={14} className="heart" /> {settings?.store_name || 'Crochet & Arte'} &copy; {new Date().getFullYear()}
+          Feito com <Heart size={14} className="heart" /> {settings?.store_name || 'Karacol & Linha'} &copy; {new Date().getFullYear()}
         </p>
       </div>
     </footer>
