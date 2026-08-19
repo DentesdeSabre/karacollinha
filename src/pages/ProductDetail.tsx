@@ -14,7 +14,6 @@ export default function ProductDetail() {
   const { settings } = useStoreSettings();
   const whatsappNumber = settings?.whatsapp_number || import.meta.env.VITE_WHATSAPP_NUMBER;
   const [selectedShipping, setSelectedShipping] = useState<ShippingOption | null>(null);
-  const [customerCep, setCustomerCep] = useState('');
 
   if (loading) {
     return (
