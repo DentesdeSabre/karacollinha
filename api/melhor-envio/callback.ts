@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getAuthorizationUrl, exchangeCodeForToken } from './auth';
+import { getAuthorizationUrl, exchangeCodeForToken } from './auth.js';
 
 const REDIRECT_URI = process.env.MELHOR_ENVIO_REDIRECT_URI || '';
 
